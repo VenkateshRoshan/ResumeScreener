@@ -1,0 +1,33 @@
+# Web API
+fastapi
+uvicorn
+aiofiles
+
+# PDF and DOCX parsing
+pypdf
+python-docx
+
+# NLP and ML
+spacy
+scikit-learn
+
+# LangChain ecosystem
+langchain
+langgraph
+
+# For downloading JD from URL
+requests
+
+# judgeval instrumentation
+judgeval
+
+# UI
+gradio
+
+PyPDF2
+
+python-docx
+
+# LLM
+langchain-ollama
+langchain-openai
