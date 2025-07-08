@@ -83,6 +83,7 @@ def create_workflow() -> StateGraph:
 
     return workflow
     
+@tracer.observe(name="resume_parsing_agent", span_type="resume")
 def parse_resume_node(state: RMAState) -> RMAState:
     try:
         if state.get("resume_file_path"):
@@ -104,6 +105,8 @@ def parse_resume_node(state: RMAState) -> RMAState:
         state["resume_data"] = resume_data
         logger.info("Resume parsed successfully")
         logger.info(f"Resume data: {resume_data}")
+
+        # tracer.log(f"Resume data: {resume_data}")
         
     except Exception as e:
         logger.error(f"Error parsing resume: {e}")
@@ -112,6 +115,7 @@ def parse_resume_node(state: RMAState) -> RMAState:
 
     return state
 
+@tracer.observe(name="job_description_parsing_agent", span_type="job")
 def parse_jd_node(state: RMAState) -> RMAState:
     try:
         logger.info("Parsing job description...")
@@ -131,6 +135,7 @@ def parse_jd_node(state: RMAState) -> RMAState:
 
     return state
 
+@tracer.observe(name="match_analysis_agent", span_type="match")
 def match_analysis_node(state: RMAState) -> RMAState:
     try:
         logger.info("Analyzing match...")
@@ -149,6 +154,7 @@ def match_analysis_node(state: RMAState) -> RMAState:
 
     return state
 
+@tracer.observe(name="compile_report_node", span_type="report")
 def compile_report_node(state: RMAState) -> RMAState:
     try:
         logger.info("Compiling report...")

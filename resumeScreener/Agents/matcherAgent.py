@@ -31,8 +31,8 @@ class MatcherAgent:
                     "match_score": a value, # TODO: need to add more matching score criteria like technical, soft skills, experience, education, etc.
                     "missing_skills": ["skill1", "skill2"],
                     "matching_skills": ["skill3", "skill4"],
-                    "improvements": ["what to improve"],
-                    "where_to_improve": ["which sections to focus"]
+                    "improvements": ["what to improve", "what to add", "what to remove"],
+                    "where_to_improve": ["which sections to focus"],
                 }}
                 
                 Resume: {json.dumps(resume_json)}
@@ -49,7 +49,7 @@ class MatcherAgent:
             
             response = self.llm.invoke(prompt)
 
-            logger.info(f"RAW LLM RESPONSE: {response}")
+            logger.info(f"RAW LLM RESPONSE (MATCHER AGENT) : {response}")
 
             # Clean and parse JSON response
             cleaned_response = response.strip()

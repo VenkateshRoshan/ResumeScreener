@@ -51,14 +51,14 @@ class JDParserAgent:
                     "other": other information
                 }}
                 The response should be in JSON format.
-                If you cannot find the information, return "N/A" for the respective key.
+                If you cannot find the information, return "N/A" for the respective key. N/A is a string not a null value.
                 The job description is:
                 {jd_text}.
                 You have to return Clean JSON response No other text or markdown.
             """
             response = self.llm.invoke(prompt)
             
-            # logger.info(f"RAW LLM RESPONSE: {response}")
+            logger.info(f"RAW LLM RESPONSE (JD PARSER) : {response}")
 
             # Clean the response - remove any markdown or extra text
             cleaned_response = response.strip()
