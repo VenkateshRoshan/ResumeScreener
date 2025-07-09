@@ -37,13 +37,17 @@ class ResumeParserAgent:
             raise ValueError("Invalid file extension")
         
         if resume_file.endswith(".pdf"):
-            # read the pdf file
-            with open(resume_file, "rb") as file:
-                pdf_reader = PyPDF2.PdfReader(file)
-                text = ""
-                for page in pdf_reader.pages:
-                    text += page.extract_text()
-                resume_text = text
+            try:
+                with open(resume_file, "rb") as file:
+                        
+                    pdf_reader = PyPDF2.PdfReader(file, strict=False)  # Add strict=False
+                    text = ""
+                    for page in pdf_reader.pages:
+                        text += page.extract_text()
+                    resume_text = text
+            except Exception as e:
+                logger.error(f"PDF parsing failed: {e}")
+                resume_text = f"Error reading PDF: {str(e)}"
         elif resume_file.endswith(".docx"):
             # read the docx file
             doc = Document(resume_file)
@@ -88,7 +92,10 @@ class ResumeParserAgent:
                 {resume_text}.
                 You have to return Clean JSON response No other text or markdown.
             """
+
             response = self.llm.invoke(prompt)
+
+            # logger.info(f"Response: {response}")
 
             # Clean the response - remove any markdown or extra text
             cleaned_response = response.strip()

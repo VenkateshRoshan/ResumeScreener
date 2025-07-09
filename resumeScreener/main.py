@@ -104,7 +104,7 @@ def parse_resume_node(state: RMAState) -> RMAState:
         
         state["resume_data"] = resume_data
         logger.info("Resume parsed successfully")
-        logger.info(f"Resume data: {resume_data}")
+        # logger.info(f"Resume data: {resume_data}")
 
         # tracer.log(f"Resume data: {resume_data}")
         
@@ -115,7 +115,7 @@ def parse_resume_node(state: RMAState) -> RMAState:
 
     return state
 
-@tracer.observe(name="job_description_parsing_agent", span_type="job")
+@tracer.observe(name="job_description_parsing_agent", span_type="job")  
 def parse_jd_node(state: RMAState) -> RMAState:
     try:
         logger.info("Parsing job description...")
@@ -126,7 +126,7 @@ def parse_jd_node(state: RMAState) -> RMAState:
         jd_data = jd_agent.run(state["jd_text"])
         state["jd_data"] = jd_data
         logger.info("Job description parsed successfully")
-        logger.info(f"Job description data: {jd_data}")
+        # logger.info(f"Job description data: {jd_data}")
 
     except Exception as e:
         logger.error(f"Error parsing job description: {e}")
@@ -189,7 +189,7 @@ def compile_report_node(state: RMAState) -> RMAState:
 
     return state
 
-def process_resume_and_job(job_description=None, resume_file=None, resume_text=None, chat_history=None, user_message=""):
+async def process_resume_and_job(job_description=None, resume_file=None, resume_text=None, chat_history=None, user_message=""):
     """
         Afunction for both workflow processing
     """
@@ -211,9 +211,62 @@ def process_resume_and_job(job_description=None, resume_file=None, resume_text=N
                 response = "Please provide a resume."
                 chat_history.append(["Analysis", response])
                 return chat_history
-        
+            
         # Get file path if uploaded
-        resume_file_path = resume_file.name if resume_file else None
+        if resume_file:
+            # Check if it's a Gradio file object (has .name) or FastAPI UploadFile (has .filename)
+            if hasattr(resume_file, 'name'):
+                resume_file_path = resume_file.name  # Gradio file object
+            elif hasattr(resume_file, 'filename'):
+                # print(f"Resume file: {resume_file}")
+                
+                # For FastAPI UploadFile, read the uploaded content
+                import tempfile
+                resume_file.file.seek(0)
+                resume_bytes = resume_file.file.read()
+                
+                # If it's a PDF, extract text first
+                if resume_file.filename.endswith(".pdf"):
+                    try:
+                        import PyPDF2
+                        import io
+                        
+                        # Create PDF reader from bytes
+                        pdf_reader = PyPDF2.PdfReader(io.BytesIO(resume_bytes))
+                        text = ""
+                        for page in pdf_reader.pages:
+                            text += page.extract_text()
+                        resume_text = text
+                        # print(f"Resume text extracted from PDF: {resume_text[:200]}...")
+                        
+                        # Create temp file with extracted text
+                        with tempfile.NamedTemporaryFile(delete=False, suffix=".txt", mode="w", encoding="utf-8") as temp_txt_file:
+                            temp_txt_file.write(resume_text)
+                            temp_txt_file.flush()
+                            resume_file_path = temp_txt_file.name
+                            
+                    except Exception as e:
+                        logger.error(f"PDF parsing failed: {e}")
+                        # Fallback to treating as binary
+                        with tempfile.NamedTemporaryFile(delete=False, suffix=".txt", mode="w", encoding="utf-8") as temp_txt_file:
+                            content_as_str = resume_bytes.decode("utf-8", errors="ignore")
+                            temp_txt_file.write(content_as_str)
+                            temp_txt_file.flush()
+                            resume_file_path = temp_txt_file.name
+                else:
+                    # For non-PDF files
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=".txt", mode="w", encoding="utf-8") as temp_txt_file:
+                        content_as_str = resume_bytes.decode("utf-8", errors="ignore")
+                        temp_txt_file.write(content_as_str)
+                        temp_txt_file.flush()
+                        resume_file_path = temp_txt_file.name
+            else:
+                resume_file_path = None
+        else:
+            resume_file_path = None
+
+        # print(f"Written file path: {resume_file_path}")
+        # print(f"Size: {os.path.getsize(resume_file_path)} bytes")
         
         # Create and run workflow
         workflow = create_workflow()
