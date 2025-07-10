@@ -1,0 +1,21 @@
+ABC Analytics is seeking a highly motivated Data Scientist to join our analytics team in New York, NY. As a Data Scientist, you will work on developing predictive models, conducting data analysis, and generating actionable insights to support business strategy.
+
+The ideal candidate should have at least 3 years of experience working with machine learning models and statistical techniques. You must be proficient in Python, data analysis libraries such as Pandas and Scikit-learn, and have strong SQL skills.
+
+Responsibilities:
+- Build, validate, and deploy predictive models
+- Analyze large datasets and present findings to stakeholders
+- Automate data pipelines and reporting workflows
+- Collaborate with cross-functional teams to understand business needs
+
+Requirements:
+- Bachelor's or Master’s degree in Computer Science, Data Science, or a related field
+- Strong knowledge of machine learning algorithms and statistical analysis
+- Experience with SQL, data visualization tools (e.g., Tableau, Power BI)
+- Familiarity with cloud platforms like AWS or GCP is a plus
+
+Preferred Skills:
+- Natural Language Processing (NLP)
+- A/B testing and experimentation frameworks
+
+This is a full-time hybrid role based in New York City. Salary range: $110,000–$130,000 depending on experience.

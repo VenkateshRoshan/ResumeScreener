@@ -31,3 +31,8 @@ python-docx
 # LLM
 langchain-ollama
 langchain-openai
+
+lark
+pytest
+
+python-dotenv

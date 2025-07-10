@@ -3,6 +3,9 @@ import sys
 import json
 from datetime import datetime
 
+from dotenv import load_dotenv
+load_dotenv()
+
 # from judgeval import JudgementClient
 from judgeval.common.tracer import Tracer
 from judgeval.scorers import AnswerRelevancyScorer
@@ -221,6 +224,17 @@ Improvements: {chr(10).join([f'- {imp}' for imp in match_results.get('improvemen
 
         state["final_report"] = final_report
         logger.info("Report compiled successfully")
+
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
+        output_dir = "reports"
+        os.makedirs(output_dir, exist_ok=True)
+        file_name = f"report_{timestamp}.md"
+        file_path = os.path.join(output_dir, file_name)
+
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write(final_report)
+
+        logger.info(f"Report saved to {file_path}")
 
     except Exception as e:
         logger.error(f"Error compiling report: {e}")

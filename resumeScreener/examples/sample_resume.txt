@@ -1,0 +1,41 @@
+Alex Morgan  
+alex.morgan@example.com | +1-555-123-4567  
+https://linkedin.com/in/alexmorgan | https://github.com/alexmorgancode  
+
+SUMMARY  
+Results-driven Data Scientist with 3+ years of experience in developing machine learning models and transforming data into strategic insights. Proven ability to deliver end-to-end data solutions across marketing and product domains.
+
+EXPERIENCE  
+Nova Metrics, New York, NY  
+Data Scientist | June 2021 – Present  
+- Built and deployed churn prediction models using Scikit-learn, improving retention by 12%  
+- Automated weekly executive dashboards using SQL and Tableau  
+- Led data initiatives to support product experimentation and A/B testing  
+
+DataSpark Solutions, Remote  
+Data Analyst | July 2019 – May 2021  
+- Analyzed user behavior data across mobile platforms  
+- Conducted cohort analysis and conversion funnel optimization  
+- Delivered business reports to stakeholders with actionable recommendations  
+
+EDUCATION  
+M.S. in Data Science, Columbia University, 2023  
+B.S. in Statistics, University of Michigan, 2021  
+
+SKILLS  
+Python, Pandas, NumPy, Scikit-learn, SQL, Tableau, Power BI, Git, Jupyter, AWS  
+
+PROJECTS  
+- Real-Time Taxi Demand Forecasting (time-series, Prophet, Dash app)  
+- Resume Parser API (NLP using spaCy, Flask)  
+- GCP Billing Analyzer (BigQuery + Data Studio pipeline)  
+
+CERTIFICATIONS  
+- Google Cloud Certified: Professional Data Engineer  
+- IBM Data Science Specialization  
+
+AWARDS  
+- Top 10 Finalist – NYC Datathon 2022  
+
+PUBLICATIONS  
+- “Customer Segmentation using Unsupervised Learning” – Medium, 2023  

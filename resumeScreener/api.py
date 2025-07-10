@@ -2,6 +2,9 @@ from fastapi import FastAPI, HTTPException, UploadFile, File, Form
 from fastapi.responses import JSONResponse
 from typing import Optional, List, Dict, Any
 
+from dotenv import load_dotenv
+load_dotenv()
+
 import os
 
 from main import process_resume_and_job

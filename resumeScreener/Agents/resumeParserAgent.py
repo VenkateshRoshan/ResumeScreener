@@ -12,6 +12,9 @@ import sys
 sys.path.append(os.getcwd())
 from config import LLM_CONFIG, FILE_CONFIG
 
+from dotenv import load_dotenv
+load_dotenv()
+
 import PyPDF2
 from docx import Document
 

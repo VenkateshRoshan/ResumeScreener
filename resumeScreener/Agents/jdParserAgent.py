@@ -6,6 +6,9 @@ import os
 import json
 from typing import Dict, List, Any, Optional
 
+from dotenv import load_dotenv
+load_dotenv()
+
 import sys
 sys.path.append(os.getcwd())
 from config import LLM_CONFIG, FILE_CONFIG

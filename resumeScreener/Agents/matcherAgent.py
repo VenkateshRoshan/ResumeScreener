@@ -6,6 +6,9 @@ import os
 import json
 from typing import Dict, List, Any, Optional
 
+from dotenv import load_dotenv
+load_dotenv()
+
 import sys
 sys.path.append(os.getcwd())
 from config import LLM_CONFIG, FILE_CONFIG
@@ -63,8 +66,9 @@ class MatcherAgent:
                 {json.dumps(jd_json)}
 
                 Instructions:
-                - Return ONLY a valid JSON object as specified.
+                - Return ONLY a valid JSON object as specified, do not add any other text or markdown and do not forget to add at the end of the JSON object.
                 - Do not include explanations, markdown formatting, or any additional text.
+                Do not return any other text at all , return JSON object only.
             """
             
             response = self.llm.invoke(prompt)

@@ -5,6 +5,9 @@ import os
 
 import requests
 
+from dotenv import load_dotenv
+load_dotenv()
+
 def handle_file_upload(file):
     if file is not None:
         filename = os.path.basename(file.name)
