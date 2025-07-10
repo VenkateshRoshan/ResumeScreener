@@ -51,7 +51,7 @@ class JDParserAgent:
                     "other": other information
                 }}
                 The response should be in JSON format.
-                If you cannot find the information, return "N/A" for the respective key. N/A is a string not a null value.
+                If you cannot find the information, return "" value for the respective key. You have to remember you have to return a string not a null value.
                 The job description is:
                 {jd_text}.
                 You have to return Clean JSON response No other text or markdown.
@@ -89,6 +89,10 @@ class JDParserAgent:
                 raise ValueError("Invalid JSON response")
         except json.JSONDecodeError as e:
             print(f"JSON Decode Error: {e}")
+            print('--------------------------------')
+            print(f"Response: {response}")
+            print('--------------------------------')
+            
             return self.__get_default_response__()
         
     def __get_default_response__(self) -> Dict[str, Any]:

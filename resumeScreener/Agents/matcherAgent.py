@@ -26,25 +26,45 @@ class MatcherAgent:
         """
         try:
             prompt = f"""
-                You are an expert recruiter. Compare the resume and job description:
-                {{
-                    "match_score": a value, # TODO: need to add more matching score criteria like technical, soft skills, experience, education, etc.
-                    "missing_skills": ["skill1", "skill2"],
-                    "matching_skills": ["skill3", "skill4"],
-                    "improvements": ["what to improve", "what to add", "what to remove"],
-                    "where_to_improve": ["which sections to focus"],
-                }}
-                
-                Resume: {json.dumps(resume_json)}
-                Job: {json.dumps(jd_json)}
+                You are a highly skilled technical recruiter. Carefully analyze and compare the following resume and job description, both provided as structured JSON.
 
-                Return only valid JSON and no other text.
-                - match_score       : integer from 0 to 100 value only add % at the end of the score.
-                - missing_skills    : list of skills mentioned in the job but not in the resume.
-                - matching_skills   : list of skills present in both the resume and the job description.
-                - improvements      : list of 3 actionable suggestions to improve the resume.
-                - where_to_improve  : list of resume sections or areas to focus on.
-                You just have to return JSON no code block or text or anything else.
+                Your task is to evaluate how well the candidate fits the job based on the following criteria and return a detailed JSON object with the evaluation.
+
+                Scoring Criteria:
+                - "match_score": Overall resume-to-job fit, integer from 0 to 100, based on a weighted combination of:
+                    - Technical skill match (30%)
+                    - Soft skill match (15%)
+                    - Relevant experience (25%)
+                    - Education alignment (10%)
+                    - Domain or industry relevance (10%)
+                    - Project relevance or impact (10%)
+
+                Feedback Structure:
+                {{
+                    "match_score": integer,  // final score from 0 to 100
+                    "matching_skills": ["skill1", "skill2"],  // skills found in both resume and job description
+                    "missing_skills": ["skill3", "skill4"],   // skills required by the job but missing in the resume
+                    "improvements": [                         // specific actionable suggestions to improve the resume
+                        "Add missing technical skills such as X and Y",
+                        "Expand details in the project section to showcase impact",
+                        "Include more role-specific accomplishments"
+                    ],
+                    "where_to_improve": [                     // resume sections that need attention
+                        "Skills",
+                        "Projects",
+                        "Experience"
+                    ]
+                }}
+
+                Resume JSON:
+                {json.dumps(resume_json)}
+
+                Job Description JSON:
+                {json.dumps(jd_json)}
+
+                Instructions:
+                - Return ONLY a valid JSON object as specified.
+                - Do not include explanations, markdown formatting, or any additional text.
             """
             
             response = self.llm.invoke(prompt)
@@ -64,6 +84,10 @@ class MatcherAgent:
                 
         except Exception as e:
             print(f"Error in matching: {e}")
+            print('--------------------------------')
+            print(f"Response: {response}")
+            print('--------------------------------')
+            
             return {
                 "match_score": 0.0,
                 "missing_skills": [],

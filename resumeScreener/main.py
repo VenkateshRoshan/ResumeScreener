@@ -3,8 +3,11 @@ import sys
 import json
 from datetime import datetime
 
-import judgeval
+# from judgeval import JudgementClient
 from judgeval.common.tracer import Tracer
+from judgeval.scorers import AnswerRelevancyScorer
+from judgeval.data import Example
+
 
 from typing import Dict, Any, TypedDict, Optional
 
@@ -57,7 +60,8 @@ resume_agent = ResumeParserAgent(llm)
 jd_agent = JDParserAgent(llm)
 matcher_agent = MatcherAgent(llm)
 
-tracer = Tracer() # can do this later
+tracer = Tracer(project_name="resume_screening_agent") # can do this later
+# client = JudgementClient()
 
 def create_workflow() -> StateGraph:
     """
@@ -99,14 +103,28 @@ def parse_resume_node(state: RMAState) -> RMAState:
             # delete the temp file
             os.remove(temp_file_path)
 
+            resume_text = state["resume_text"]
+
+            print('<-------------------------------->')
+            print(f"Resume Text: {resume_text}")
+            print('--------------------------------')
+            print(f"Resume Data: {resume_data}")
+            print('--------------------------------')
+
+            # JUDGEVAL SCORING
+            tracer.async_evaluate(
+                scorers=[AnswerRelevancyScorer(threshold=0.5)],
+                input=resume_text,
+                actual_output=json.dumps(resume_data),
+                model="gpt-4"
+            )
+
         else:
             raise ValueError("No resume file or text provided")
         
         state["resume_data"] = resume_data
         logger.info("Resume parsed successfully")
         # logger.info(f"Resume data: {resume_data}")
-
-        # tracer.log(f"Resume data: {resume_data}")
         
     except Exception as e:
         logger.error(f"Error parsing resume: {e}")
@@ -128,6 +146,14 @@ def parse_jd_node(state: RMAState) -> RMAState:
         logger.info("Job description parsed successfully")
         # logger.info(f"Job description data: {jd_data}")
 
+        # JUDGEVAL SCORING
+        tracer.async_evaluate(
+            scorers=[AnswerRelevancyScorer(threshold=0.5)],
+            input=state["jd_text"],
+            actual_output=json.dumps(jd_data),
+            model="gpt-4"
+        )
+
     except Exception as e:
         logger.error(f"Error parsing job description: {e}")
         state["error"] = str(e)
@@ -147,6 +173,14 @@ def match_analysis_node(state: RMAState) -> RMAState:
         state["match_results"] = match_results
         logger.info("Match analysis completed")
 
+        # Evaluating Agent usign judgeval scorer
+        tracer.async_evaluate(
+            scorers=[AnswerRelevancyScorer(threshold=0.5)],
+            input=state["resume_data"],
+            actual_output=json.dumps(match_results),
+            model="gpt-4"
+        )
+
     except Exception as e:
         logger.error(f"Error during match analysis: {e}")
         state["error"] = str(e)
@@ -164,19 +198,25 @@ def compile_report_node(state: RMAState) -> RMAState:
             return state
         
         match_results = state["match_results"]
-        resume_data = state["resume_data"]
-        jd_data = state["jd_data"]
+        # resume_data = state["resume_data"]
+        # jd_data = state["jd_data"]
+
+        # ! TODO: 
+        # tracer.log(f"match_score: {match_results.get('match_score', 0)}")
+        # tracer.log(f"missing_skills: {match_results.get('missing_skills', [])}")
+        # tracer.log(f"matching_skills: {match_results.get('matching_skills', [])}") # If added this log, then it disturbing the RMA state
 
         final_report = f"""
-            # Resume Analysis Report
+Resume Analysis Report
 
-            ## Match Score: {match_results.get("match_score", 0)}%
+Match Score: {match_results.get("match_score", 0)}%
 
-            ## Missing Skills: {len(match_results.get("missing_skills", []))}
+Missing Skills: {len(match_results.get("missing_skills", []))}
+             -> {', '.join(match_results.get('missing_skills', []))}
+
+Improvements: {chr(10).join([f'- {imp}' for imp in match_results.get('improvements', [])[:3]])}
+
             
-                             : {', '.join(match_results.get('missing_skills', []))}
-
-            ## Improvements: {chr(10).join([f'- {imp}' for imp in match_results.get('improvements', [])[:3]])}
         """
 
         state["final_report"] = final_report
@@ -308,7 +348,7 @@ async def process_resume_and_job(job_description=None, resume_file=None, resume_
 if __name__ == "__main__":
     # Test with sample data
     test_jd = "Python developer with Django, React skills. 3+ years experience."
-    test_resume_text = "I am a Python developer with 2 years Django experience."
+    test_resume_text = "Butchi Venkatesh Adari. I am a Python developer with 2 years Django experience."
     
     result = process_resume_and_job(
         job_description=test_jd,

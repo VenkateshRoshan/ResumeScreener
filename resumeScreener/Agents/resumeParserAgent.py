@@ -68,29 +68,32 @@ class ResumeParserAgent:
         """
         try:
             prompt = f"""
-                Extract the following information from the resume data:
+                You are a resume extraction engine. Extract the following fields from the given resume text and return only a valid JSON object. No extra text, markdown, or code blocks.
+
+                Required JSON structure:
                 {{
-                    "name": candidate's name,
-                    "email": candidate's email,
-                    "phone": candidate's phone number,
-                    "linkedin": candidate's linkedin profile url,
-                    "github": candidate's github profile url,
-                    "portfolio url": candidate's portfolio url,
-                    "education": candidate's education as a list of strings only extract education institution names and degrees,
-                    "experience": candidate's experience as a list of another dictionary with keys "company", "title", "location", "description", "years of experience",
-                    "skills": candidate's skills as a list of strings along with the mentioned extract through out from the resume text also,
-                    "projects": candidate's projects,
-                    "certifications": candidate's certifications,
-                    "publications": candidate's publications,
-                    "awards": candidate's awards,
-                    "summary": candidate's summary in 2-3 sentences,
-                    "other": other information
+                    "name": string,
+                    "email": string,
+                    "phone": string,
+                    "linkedin": string,
+                    "github": string,
+                    "portfolio url": string,
+                    "education": list of strings (only institution names and degrees),
+                    "experience": list of objects with keys "company", "title", "location", "description", and "years of experience",
+                    "skills": list of strings (extract all mentioned skills from the text),
+                    "projects": list of strings or short descriptions,
+                    "certifications": list of strings,
+                    "publications": list of strings,
+                    "awards": list of strings,
+                    "summary": 2–3 sentence string,
+                    "other": string or list (for miscellaneous information)
                 }}
-                The response should be in JSON format.
-                If you cannot find the information, return "N/A" for the respective key.
-                The resume data is:
-                {resume_text}.
-                You have to return Clean JSON response No other text or markdown.
+
+                Important Instructions:
+                - If a field is not found, return the string "N/A" (not null or empty).
+                - Output must be a single valid JSON object, without markdown, comments, or explanation.
+                - The input resume text is:
+                {resume_text}
             """
 
             response = self.llm.invoke(prompt)
@@ -129,6 +132,10 @@ class ResumeParserAgent:
                 raise ValueError("Invalid JSON response")
         except json.JSONDecodeError as e:
             print(f"JSON Decode Error: {e}")
+            print('--------------------------------')
+            print(f"Response: {response}")
+            print('--------------------------------')
+
             return self.__get_default_response__()
         except Exception as e:
             print(f"Error: {e}")
