@@ -1,0 +1,16 @@
+# Ignore Python cache and temp files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+
+.git
+.gitignore
+
+.DS_Store
+Thumbs.db
+
+.env
+
+resumeScreener/reports/

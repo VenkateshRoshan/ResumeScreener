@@ -10,10 +10,11 @@ from typing import Dict, List, Any, Optional
 
 import sys
 sys.path.append(os.getcwd())
-from config import LLM_CONFIG, FILE_CONFIG
+from config import FILE_CONFIG
 
 from dotenv import load_dotenv
 load_dotenv()
+from utils import initialize_llm
 
 import PyPDF2
 from docx import Document
@@ -101,10 +102,10 @@ class ResumeParserAgent:
 
             response = self.llm.invoke(prompt)
 
-            # logger.info(f"Response: {response}")
-
             # Clean the response - remove any markdown or extra text
-            cleaned_response = response.strip()
+            cleaned_response = response.content.strip() if hasattr(response, 'content') else response.strip()
+            
+            # logger.info(f"RAW LLM RESPONSE (RESUME PARSER) : {cleaned_response}")
             
             # Find JSON in response (in case LLM adds extra text)
             start_idx = cleaned_response.find('{')
@@ -179,21 +180,6 @@ class ResumeParserAgent:
 
 if __name__ == "__main__":
     import argparse
-    def initialize_llm():
-        model_name = LLM_CONFIG["model_name"]
-        base_url = LLM_CONFIG["base_url"]
-
-        print(f"Using model: {model_name} and base url: {base_url}")
-
-        if "ollama" in model_name.lower() or "llama" in model_name.lower():
-            # use ollama
-            from langchain_ollama import OllamaLLM
-            llm = OllamaLLM(model=model_name, base_url=base_url)
-        else:
-            # use openai
-            from langchain_openai import OpenAI
-            llm = OpenAI(model=model_name, api_key=os.getenv("OPENAI_API_KEY"))
-        return llm
     
     parser = argparse.ArgumentParser()
     parser.add_argument("--resume", "-r", type=str, required=True, help="Path to the resume file")

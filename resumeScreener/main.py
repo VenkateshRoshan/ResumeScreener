@@ -11,11 +11,11 @@ from judgeval.common.tracer import Tracer
 from judgeval.scorers import AnswerRelevancyScorer
 from judgeval.data import Example
 
-
+from utils import initialize_llm
 from typing import Dict, Any, TypedDict, Optional
 
 sys.path.append(os.getcwd())
-from config import LLM_CONFIG, FILE_CONFIG, AGENT_CONFIG, JUDGEVAL_CONFIG
+from config import FILE_CONFIG, AGENT_CONFIG, JUDGEVAL_CONFIG
 
 from Agents.jdParserAgent import JDParserAgent
 from Agents.resumeParserAgent import ResumeParserAgent
@@ -45,20 +45,6 @@ class RMAState(TypedDict):
     match_results: Dict[str, Any]
     final_report: str
     error: Optional[str] = None # If any error occurred b/w the process
-
-def initialize_llm():
-    model_name = LLM_CONFIG["model_name"]
-    base_url = LLM_CONFIG["base_url"]
-
-    if "llama" in model_name.lower() or "localhost" in base_url or "11434" in base_url:
-        from langchain_ollama import OllamaLLM
-        llm = OllamaLLM(model=model_name, base_url=base_url)
-        print(f"Using Ollama model: {model_name}")
-    else:
-        from langchain_openai import OpenAI
-        llm = OpenAI(model=model_name, api_key=os.getenv("OPENAI_API_KEY"))
-        print(f"Using OpenAI model: {model_name}")
-    return llm
 
 llm = initialize_llm() # Initialize LLM
 

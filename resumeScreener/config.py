@@ -2,12 +2,7 @@
 Contains LLM settings and other configurations
 """
 
-# LLM Configuration - as of now implemented for ollama and openai only
-LLM_CONFIG = {
-    "model_name": "llama3.1:8b", 
-    "base_url": "http://localhost:11434", 
-}
-
+import os
 # Agent Settings
 AGENT_CONFIG = {
     "resume_parser": {

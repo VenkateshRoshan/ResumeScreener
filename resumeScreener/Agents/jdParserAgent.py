@@ -11,7 +11,8 @@ load_dotenv()
 
 import sys
 sys.path.append(os.getcwd())
-from config import LLM_CONFIG, FILE_CONFIG
+from config import FILE_CONFIG
+from utils import initialize_llm
 
 import logging
 
@@ -38,33 +39,42 @@ class JDParserAgent:
         """
         try:
             prompt = f"""
-                Extract the following information from the job description:
+                You are a job description parsing engine.
+
+                Extract the following fields from the given job description and return a valid JSON object only. Do not include any explanations, text, markdown, or formatting—only the raw JSON.
+
+                Extract the following structured fields from the job description below. 
+                If a field is not explicitly stated, make a best guess based on context.
+                Return only a valid JSON object with the following keys. No other text.
+
+                Return the following fields:
                 {{
                     "title": job title,
                     "company": company name,
                     "location": job location,
-                    "type": full time, part time, contract, internship, etc.
+                    "type": full time, part time, contract, internship, etc.,
                     "experience required": minimum experience required in number of years,
                     "qualifications": list of educational qualifications,
                     "required skills": list of skills required for the job,
                     "preferred skills": list of skills preferred for the job,
                     "salary": salary range,
-                    "work type": remote, hybrid, on-site, etc.
-                    "summary": summary of the job description in 2-3 sentences briefly,
-                    "other": other information
+                    "work type": remote, hybrid, on-site, etc.,
+                    "summary": 2-3 sentence summary of the job,
+                    "other": any other relevant information
                 }}
-                The response should be in JSON format.
-                If you cannot find the information, return "" value for the respective key. You have to remember you have to return a string not a null value.
-                The job description is:
-                {jd_text}.
-                You have to return Clean JSON response No other text or markdown.
+
+                Job description:
+                {jd_text}
+
+                Respond ONLY with a valid JSON object. No extra text.
             """
+
             response = self.llm.invoke(prompt)
-            
-            # logger.info(f"RAW LLM RESPONSE (JD PARSER) : {response}")
 
             # Clean the response - remove any markdown or extra text
-            cleaned_response = response.strip()
+            cleaned_response = response.content.strip() if hasattr(response, 'content') else response.strip()
+
+            # logger.info(f"RAW LLM RESPONSE (JD PARSER) : {cleaned_response}")
             
             # Find JSON in response (in case LLM adds extra text) - cause json is a dict so extracting indices of '{' and '}' from the string.
             start_idx = cleaned_response.find('{')
@@ -128,21 +138,6 @@ class JDParserAgent:
 
 if __name__ == "__main__":
     import argparse
-    def initialize_llm():
-        model_name = LLM_CONFIG["model_name"]
-        base_url = LLM_CONFIG["base_url"]
-
-        print(f"Using model: {model_name} and base url: {base_url}")
-
-        if "ollama" in model_name.lower() or "llama" in model_name.lower():
-            # use ollama
-            from langchain_ollama import OllamaLLM
-            llm = OllamaLLM(model=model_name, base_url=base_url)
-        else:
-            # use openai
-            from langchain_openai import OpenAI
-            llm = OpenAI(model=model_name, api_key=os.getenv("OPENAI_API_KEY"))
-        return llm
     
     parser = argparse.ArgumentParser()
     parser.add_argument("--jd", "-r", type=str, required=True, help="Path to the resume file")

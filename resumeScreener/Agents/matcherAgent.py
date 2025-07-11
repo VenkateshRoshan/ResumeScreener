@@ -11,8 +11,8 @@ load_dotenv()
 
 import sys
 sys.path.append(os.getcwd())
-from config import LLM_CONFIG, FILE_CONFIG
-
+from config import FILE_CONFIG
+from utils import initialize_llm
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -76,7 +76,7 @@ class MatcherAgent:
             # logger.info(f"RAW LLM RESPONSE (MATCHER AGENT) : {response}")
 
             # Clean and parse JSON response
-            cleaned_response = response.strip()
+            cleaned_response = response.content.strip() if hasattr(response, 'content') else response.strip()
             start_idx = cleaned_response.find('{')
             end_idx = cleaned_response.rfind('}') + 1
             
@@ -101,20 +101,6 @@ class MatcherAgent:
             }
     
 if __name__ == "__main__":
-    def initialize_llm():
-        model_name = LLM_CONFIG["model_name"]
-        base_url = LLM_CONFIG["base_url"]
-
-        if "llama" in model_name.lower() or "localhost" in base_url or "11434" in base_url:
-            from langchain_ollama import OllamaLLM
-            llm = OllamaLLM(model=model_name, base_url=base_url)
-            print(f"Using Ollama model: {model_name}")
-        else:
-            from langchain_openai import OpenAI
-            llm = OpenAI(model=model_name, api_key=os.getenv("OPENAI_API_KEY"))
-            print(f"Using OpenAI model: {model_name}")
-        return llm
-    
     # Test with sample data
     llm = initialize_llm()
     agent = MatcherAgent(llm)
