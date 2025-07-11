@@ -29,6 +29,9 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+output_dir = "reports"
+os.makedirs(output_dir, exist_ok=True)
+
 # Define state structure
 class RMAState(TypedDict):
     """
@@ -204,7 +207,7 @@ def compile_report_node(state: RMAState) -> RMAState:
         # resume_data = state["resume_data"]
         # jd_data = state["jd_data"]
 
-        # ! TODO: 
+        # ! TODO: BUG: LOG and Decorator are not working combined
         # tracer.log(f"match_score: {match_results.get('match_score', 0)}")
         # tracer.log(f"missing_skills: {match_results.get('missing_skills', [])}")
         # tracer.log(f"matching_skills: {match_results.get('matching_skills', [])}") # If added this log, then it disturbing the RMA state
@@ -226,22 +229,21 @@ Improvements: {chr(10).join([f'- {imp}' for imp in match_results.get('improvemen
         logger.info("Report compiled successfully")
 
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
-        output_dir = "reports"
-        os.makedirs(output_dir, exist_ok=True)
         file_name = f"report_{timestamp}.md"
         file_path = os.path.join(output_dir, file_name)
 
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(final_report)
 
-        logger.info(f"Report saved to {file_path}")
+        print(f"Report saved to {file_path}")
+
+        return state
 
     except Exception as e:
         logger.error(f"Error compiling report: {e}")
         state["error"] = str(e)
-        state["final_report"] = ""
-
-    return state
+        state["final_report"] = f"#Analysis Failed\n\nReason: {str(e)}"
+        return state    
 
 async def process_resume_and_job(job_description=None, resume_file=None, resume_text=None, chat_history=None, user_message=""):
     """
@@ -340,6 +342,8 @@ async def process_resume_and_job(job_description=None, resume_file=None, resume_
         
         config = {"configurable": {"thread_id": "rma-analysis"}}
         result = app.invoke(initial_state, config)
+
+        print(f"Result: {result}")
         
         final_report = result.get("final_report", "No report generated")
         
