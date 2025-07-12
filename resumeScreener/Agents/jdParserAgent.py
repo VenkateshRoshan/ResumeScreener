@@ -53,7 +53,7 @@ class JDParserAgent:
                     "company": company name,
                     "location": job location,
                     "type": full time, part time, contract, internship, etc.,
-                    "experience required": minimum experience required in number of years,
+                    "experience required": minimum experience required in number of years ( should be a string ),
                     "qualifications": list of educational qualifications,
                     "required skills": list of skills required for the job,
                     "preferred skills": list of skills preferred for the job,

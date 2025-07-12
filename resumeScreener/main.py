@@ -204,11 +204,10 @@ Resume Analysis Report
 Match Score: {match_results.get("match_score", 0)}%
 
 Missing Skills: {len(match_results.get("missing_skills", []))}
-             -> {', '.join(match_results.get('missing_skills', []))}
+{chr(10).join([f'- {imp}' for imp in match_results.get('missing_skills', [])[:3]])}
 
-Improvements: {chr(10).join([f'- {imp}' for imp in match_results.get('improvements', [])[:3]])}
-
-            
+Suggestions: \n
+{chr(10).join([f'- {imp}' for imp in match_results.get('Suggestions', [])[:3]])}
         """
 
         state["final_report"] = final_report
@@ -329,7 +328,7 @@ async def process_resume_and_job(job_description=None, resume_file=None, resume_
         config = {"configurable": {"thread_id": "rma-analysis"}}
         result = app.invoke(initial_state, config)
 
-        print(f"Result: {result}")
+        # print(f"Result: {result}")
         
         final_report = result.get("final_report", "No report generated")
         

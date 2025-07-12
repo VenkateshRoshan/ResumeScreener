@@ -19,7 +19,7 @@ def handle_file_upload(file):
             return "[📄 Resume file will be processed automatically]", f"✅ Uploaded: {filename}"
     return "", ""
 
-def analyze_resume_job(job_desc, resume_file, resume_text, chat_history, user_msg):
+def analyze_resume_job(job_desc, resume_file, resume_text, chat_history):
     """UI wrapper for the main workflow"""
     # -> for direct gradio app testing
     # try: 
@@ -66,11 +66,13 @@ def analyze_resume_job(job_desc, resume_file, resume_text, chat_history, user_ms
 
         final_report = result["data"]["final_report"]
         chat_history.append(["AI", final_report])
+        # chat_history.append({"role": "AI", "content": final_report})
 
         return chat_history
     except Exception as e:
         error_msg = f"Error: {str(e)}"
         chat_history.append(["Error", error_msg])
+        # chat_history.append({"role": "Error", "content": error_msg})
         return chat_history
 
 def clear_chat():
@@ -447,15 +449,16 @@ def create_rma_interface():
                 with gr.Column(elem_classes=["chat-container"]):
                     chatbot = gr.Chatbot(
                         label="",
-                        show_copy_button=True
+                        show_copy_button=True,
+                        # type="messages"
                     )
                     
                     with gr.Row(elem_classes=["action-buttons"]):
                         analyze_btn = gr.Button("🔍 Analyze Match", variant="primary")
                         clear_btn = gr.Button("🗑️ Clear Chat", variant="secondary")
                     
-                    with gr.Row(elem_classes=["message-input"]):
-                        qa_text = gr.Textbox(placeholder="Enter your message here...", lines=1, label="")
+                    # with gr.Row(elem_classes=["message-input"]):
+                    #     qa_text = gr.Textbox(placeholder="Enter your message here...", lines=1, label="")
         
         # Event handlers
         attach_btn.click(
@@ -471,7 +474,7 @@ def create_rma_interface():
         
         analyze_btn.click(
             fn=analyze_resume_job, # from here the button calls the main.py function
-            inputs=[job_desc, resume_file, resume_text, chatbot, qa_text],
+            inputs=[job_desc, resume_file, resume_text, chatbot], # TODO: qa_text for the chatbot integration
             outputs=[chatbot]
         )
         

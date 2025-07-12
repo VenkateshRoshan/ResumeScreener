@@ -42,20 +42,29 @@ class MatcherAgent:
                     - Domain or industry relevance (10%)
                     - Project relevance or impact (10%)
 
+                Suggestions:
+                - Provide specific suggestions for improvements in the resume
+                - Suggest additional skills that the candidate might need to develop
+                - Suggest ways to highlight relevant experience
+                - Suggest ways to align education with the job requirements
+                - Suggest ways to match the candidate's skills to the job description
+                - Follow ATS best practices and format the resume accordingly
+
+                Matching Skills:
+                - Provide a list of skills that are found in both the resume and the job description
+
+                Missing Skills:
+                - Provide a list of skills that are required by the job but missing in the resume
+
                 Feedback Structure:
                 {{
                     "match_score": integer,  // final score from 0 to 100
                     "matching_skills": ["skill1", "skill2"],  // skills found in both resume and job description
                     "missing_skills": ["skill3", "skill4"],   // skills required by the job but missing in the resume
-                    "improvements": [                         // specific actionable suggestions to improve the resume
-                        "Add missing technical skills such as X and Y",
-                        "Expand details in the project section to showcase impact",
-                        "Include more role-specific accomplishments"
-                    ],
-                    "where_to_improve": [                     // resume sections that need attention
-                        "Skills",
-                        "Projects",
-                        "Experience"
+                    "Suggestions": [
+                        "suggestion1",
+                        "suggestion2",
+                        "suggestion3",
                     ]
                 }}
 
@@ -96,8 +105,7 @@ class MatcherAgent:
                 "match_score": 0.0,
                 "missing_skills": [],
                 "matching_skills": [],
-                "improvements": [],
-                "where_to_improve": []
+                "Suggestions": []
             }
     
 if __name__ == "__main__":
