@@ -106,7 +106,7 @@ In another terminal:
 python resumeScreener/app.py
 ```
 
-You'll see a nice web UI at `http://localhost:7860`.
+You'll see a `Gradio` web UI at `http://localhost:7899`.
 
 ## 1. Docker Setup
 
@@ -123,8 +123,14 @@ docker pull venkateshroshan/resume-rma:latest
 
 # Create your environment file (see step 2 below)
 # Then run the container
+# For Linux 
 docker run --env-file resumeScreener/.env \
   --network=host \
+  venkateshroshan/resume-rma:latest
+
+# For Windows/Mac
+docker run --env-file resumeScreener/.env \
+  -p 7899:7899 -p 8345:8345 \
   venkateshroshan/resume-rma:latest
 
 ```
@@ -171,8 +177,8 @@ docker run --env-file resumeScreener/.env \
 
 ### Access the application
 
-* **Gradio UI:** http://localhost:7860
-* **FastAPI docs:** http://localhost:8000/docs
+* **Gradio UI:** http://localhost:7899
+* **FastAPI docs:** http://localhost:8345/docs
 
 ### Docker Notes
 
@@ -252,7 +258,7 @@ ResumeScreener/
 
 ## API Endpoints
 
-### FastAPI Backend (`http://localhost:8000`)
+### FastAPI Backend (`http://localhost:8345`)
 
 * `POST /analyze` - Analyze resume against job description
 * `GET /health` - Health check endpoint
@@ -317,7 +323,7 @@ ollama list
 docker run --network=host ...
 
 # For Windows/Mac, use bridge network
-docker run -p 7860:7860 -p 8000:8000 ...
+docker run -p 7899:7899 -p 8345:8345 ...
 ```
 
 **3. Missing Dependencies:**
