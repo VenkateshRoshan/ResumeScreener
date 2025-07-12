@@ -12,7 +12,7 @@ COPY resumeScreener ./resumeScreener
 
 WORKDIR /app/resumeScreener
 
-EXPOSE 7860
-EXPOSE 8000
+EXPOSE 7899
+EXPOSE 8345
 
 CMD ["sh", "-c", "python app.py & python api.py"]

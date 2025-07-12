@@ -55,12 +55,12 @@ def analyze_resume_job(job_desc, resume_file, resume_text, chat_history):
                     "application/pdf" if resume_file.name.endswith(".pdf") else "text/plain"  # content type
                 )
                 
-                response = requests.post("http://localhost:8000/analyze", data=data, files=files)
+                response = requests.post("http://localhost:8345/analyze", data=data, files=files)
                 response.raise_for_status()
                 result = response.json()
 
         else:
-            response = requests.post("http://localhost:8000/analyze", data=data)
+            response = requests.post("http://localhost:8345/analyze", data=data)
             response.raise_for_status()
             result = response.json()
 
@@ -483,4 +483,4 @@ def create_rma_interface():
     return demo
 
 if __name__ == "__main__":
-    create_rma_interface().launch(server_name="0.0.0.0", server_port=7860, share=True)
+    create_rma_interface().launch(server_name="0.0.0.0", server_port=7899, share=True)
