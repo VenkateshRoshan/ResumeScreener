@@ -108,12 +108,25 @@ python resumeScreener/app.py
 
 You'll see a nice web UI at `http://localhost:7860`.
 
-## Docker Setup
+## 1. Docker Setup
 
-### 1. Build the Docker image
+### Option 1.1. Build from Source
 
 ```bash
 docker build -t resume-rma .
+```
+
+### Option 1.2. Pull from Docker Hub ( The recent version )
+```bash
+# Pull the latest image
+docker pull venkateshroshan/resume-rma:latest
+
+# Create your environment file (see step 2 below)
+# Then run the container
+docker run --env-file resumeScreener/.env \
+  --network=host \
+  venkateshroshan/resume-rma:latest
+
 ```
 
 ### 2. Start Ollama on your host
