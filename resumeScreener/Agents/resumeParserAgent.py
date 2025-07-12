@@ -96,6 +96,7 @@ class ResumeParserAgent:
                 Important Instructions:
                 - If a field is not found, return the string "N/A" (not null or empty).
                 - Output must be a single valid JSON object, without markdown, comments, or explanation.
+                - Every value in the JSON object must be a string.
                 - The input resume text is:
                 {resume_text}
             """

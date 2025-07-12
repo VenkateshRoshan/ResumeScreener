@@ -81,17 +81,21 @@ def clear_chat():
 def create_rma_interface():
     with gr.Blocks(
         title="Resume Match & Advisory (RMA) Agent",
-        theme=gr.themes.Default(),
+        theme=gr.themes.Soft(
+            primary_hue="orange",
+            secondary_hue="neutral",
+            neutral_hue="gray"
+        ),
         css="""
             /* Global Styles */
             .gradio-container {
                 font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
-                background: #1a1a1a !important;
+                background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%) !important;
             }
             
             /* Main Container */
             .main-container { 
-                max-width: 1400px; 
+                max-width: 1200px; 
                 margin: 0 auto; 
                 padding: 20px;
                 background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%) !important;
@@ -99,386 +103,511 @@ def create_rma_interface():
             }
             
             /* Header Styling */
-            .main-container h2 {
-                color: #ffffff;
+            .header-section {
                 text-align: center;
-                margin-bottom: 10px;
+                margin-bottom: 30px;
+                padding: 15px;
+                background: linear-gradient(135deg, #27ae60, #2ecc71);
+                border-radius: 15px;
+                box-shadow: 0 6px 24px rgba(39, 174, 96, 0.3);
+            }
+            
+            .header-section h1 {
+                color: white;
+                font-size: 2em;
                 font-weight: 700;
-                text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                margin: 0;
+                text-shadow: 0 2px 4px rgba(0,0,0,0.2);
             }
             
-            .main-container > .gr-markdown:nth-child(2) {
-                text-align: center;
-                color: #b0b0b0;
-                margin-bottom: 30px;
-                font-size: 16px;
+            .header-section p {
+                color: #e8f5e8;
+                font-size: 14px;
+                margin: 8px 0 0 0;
+                font-weight: 500;
             }
             
-            /* Top Section - Input Areas */
-            .top-section {
-                display: grid !important;
-                grid-template-columns: 1fr 1fr !important;
-                gap: 25px !important;
-                margin-bottom: 30px;
+            /* Input Sections */
+            .input-section {
                 background: #2a2a2a;
+                border-radius: 16px;
                 padding: 25px;
-                border-radius: 12px;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-                border: 1px solid #404040;
+                margin-bottom: 25px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+                border: 2px solid #404040;
+                transition: all 0.3s ease;
             }
             
-            /* Input Column Styling */
-            .input-columns {
-                width: 100% !important;
+            .input-section:hover {
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+                transform: translateY(-2px);
             }
             
-            .input-columns h3 {
-                color: #ffffff;
-                margin-bottom: 15px !important;
+            .section-title {
+                color: #27ae60;
+                font-size: 20px;
                 font-weight: 600;
-                font-size: 18px;
-                border-bottom: 2px solid #3498db;
-                padding-bottom: 8px;
+                margin-bottom: 15px;
+                padding-bottom: 10px;
+                border-bottom: 3px solid #2ecc71;
+                display: flex;
+                align-items: center;
+                gap: 10px;
             }
             
-            /* Textbox Styling - More Specific Selectors */
-            .input-columns .gr-textbox {
-                width: 100% !important;
-                margin-bottom: 0 !important;
-                height: 220px !important;
-            }
-            
-            .input-columns .gr-textbox textarea,
-            .input-columns .gr-textbox .gr-text-input,
-            .input-columns textbox textarea,
-            .resume-upload-row .gr-textbox textarea { 
-                height: 220px !important;
-                max-height: 220px !important;
-                min-height: 220px !important;
-                width: 100% !important;
-                resize: none !important;
-                overflow-y: auto !important;
+            /* Job Description Section */
+            .job-desc-section .gr-textbox textarea {
+                height: 200px !important;
+                max-height: 200px !important;
+                min-height: 200px !important;
                 border: 2px solid #555555 !important;
-                border-radius: 8px !important;
+                border-radius: 12px !important;
                 padding: 15px !important;
                 font-size: 14px !important;
-                line-height: 1.5 !important;
+                line-height: 1.6 !important;
                 background: #333333 !important;
                 color: #ffffff !important;
                 transition: all 0.3s ease !important;
-                box-sizing: border-box !important;
+                resize: none !important;
+                overflow-y: auto !important;
             }
             
-            /* Force height override for all states */
-            .input-columns .gr-textbox textarea[style*="height"],
-            .resume-upload-row .gr-textbox textarea[style*="height"] {
-                height: 220px !important;
-                max-height: 220px !important;
-                min-height: 220px !important;
-            }
-            
-            .input-columns .gr-textbox textarea:focus { 
-                border-color: #3498db !important;
+            .job-desc-section .gr-textbox textarea:focus {
+                border-color: #2ecc71 !important;
                 background: #3a3a3a !important;
-                box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2) !important;
+                box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.2) !important;
                 outline: none !important;
-                height: 220px !important;
-                max-height: 220px !important;
-                min-height: 220px !important;
             }
             
-            /* File Upload Section */
-            .resume-upload-row {
-                display: flex !important;
-                gap: 10px !important;
-                align-items: flex-start !important;
+            /* Resume Section */
+            .resume-section {
+                position: relative;
             }
             
-            .attach-btn {
-                background: #3498db !important;
+            .resume-options {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+                margin-top: 15px;
+            }
+            
+            .upload-option, .text-option {
+                padding: 20px;
+                border: 2px dashed #fde2d3;
+                border-radius: 12px;
+                text-align: center;
+                transition: all 0.3s ease;
+                background: #fefefe;
+            }
+            
+            .upload-option:hover, .text-option:hover {
+                border-color: #f39c12;
+                background: #fff8f5;
+                transform: translateY(-2px);
+            }
+            
+            .upload-option.active, .text-option.active {
+                border-color: #f39c12;
+                background: #fff8f5;
+                box-shadow: 0 4px 15px rgba(243, 156, 18, 0.2);
+            }
+            
+            .option-icon {
+                font-size: 2em;
+                margin-bottom: 10px;
+                color: #f39c12;
+            }
+            
+            .option-title {
+                font-weight: 600;
+                color: #d35400;
+                margin-bottom: 5px;
+            }
+            
+            .option-desc {
+                font-size: 12px;
+                color: #7d4f36;
+            }
+            
+            .resume-text-area .gr-textbox textarea {
+                height: 200px !important;
+                max-height: 200px !important;
+                min-height: 200px !important;
+                border: 2px solid #555555 !important;
+                border-radius: 12px !important;
+                padding: 15px !important;
+                font-size: 14px !important;
+                line-height: 1.6 !important;
+                background: #333333 !important;
+                color: #ffffff !important;
+                transition: all 0.3s ease !important;
+                resize: none !important;
+                overflow-y: auto !important;
+            }
+            
+            .resume-text-area .gr-textbox textarea:focus {
+                border-color: #2ecc71 !important;
+                background: #3a3a3a !important;
+                box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.2) !important;
+                outline: none !important;
+            }
+            
+            /* File Upload Styling */
+            .gr-file {
+                border: 2px dashed #555555 !important;
+                border-radius: 12px !important;
+                background: #333333 !important;
+                padding: 20px !important;
+                text-align: center !important;
+            }
+            
+            .gr-file:hover {
+                border-color: #2ecc71 !important;
+                background: #3a3a3a !important;
+            }
+            
+            /* Process Button */
+            .process-section {
+                text-align: center;
+                margin: 30px 0;
+            }
+            
+            .process-btn {
+                background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
                 color: white !important;
                 border: none !important;
-                border-radius: 6px !important;
-                padding: 8px 12px !important;
-                font-size: 16px !important;
+                border-radius: 50px !important;
+                padding: 15px 40px !important;
+                font-size: 18px !important;
+                font-weight: 600 !important;
                 cursor: pointer !important;
                 transition: all 0.3s ease !important;
-                height: 40px !important;
-                min-width: 45px !important;
+                box-shadow: 0 6px 20px rgba(39, 174, 96, 0.3) !important;
+                text-transform: uppercase !important;
+                letter-spacing: 1px !important;
             }
             
-            .attach-btn:hover {
-                background: #2980b9 !important;
+            .process-btn:hover {
+                transform: translateY(-3px) !important;
+                box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4) !important;
+                background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
+            }
+            
+            .process-btn:active {
                 transform: translateY(-1px) !important;
             }
             
-            /* Bottom Section - Chat Area */
-            .bottom-section { 
-                background: #2a2a2a;
-                border-radius: 12px;
-                padding: 25px;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-                border: 1px solid #404040;
-                min-height: 500px;
-            }
-            
-            .bottom-section h3 {
-                color: #ffffff;
-                margin-bottom: 20px !important;
-                font-weight: 600;
-                font-size: 18px;
-                border-bottom: 2px solid #e74c3c;
-                padding-bottom: 8px;
-            }
-            
-            /* Chat Container */
-            .chat-container { 
-                height: 100%; 
-                display: flex;
-                flex-direction: column;
-            }
-            
-            .chat-container .gr-chatbot { 
-                height: 400px !important; 
-                border: 2px solid #555555 !important;
-                border-radius: 8px !important;
-                background: #333333 !important;
-                margin-bottom: 20px !important;
-            }
-            
-            /* Button Styling */
-            .action-buttons {
-                display: flex !important;
-                gap: 15px !important;
-                margin-bottom: 15px !important;
-                justify-content: center !important;
-            }
-            
-            .gr-button {
-                border-radius: 8px !important;
-                padding: 12px 24px !important;
-                font-weight: 600 !important;
-                font-size: 14px !important;
-                transition: all 0.3s ease !important;
-                border: none !important;
-                cursor: pointer !important;
-            }
-            
-            .gr-button.gr-button-primary {
-                background: linear-gradient(135deg, #3498db, #2980b9) !important;
-                color: white !important;
-                box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3) !important;
-            }
-            
-            .gr-button.gr-button-primary:hover {
-                transform: translateY(-2px) !important;
-                box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4) !important;
-            }
-            
-            .gr-button.gr-button-secondary {
+            /* Analyzing Button State */
+            .process-btn[value*="Analyzing"] {
                 background: linear-gradient(135deg, #95a5a6, #7f8c8d) !important;
-                color: white !important;
-                box-shadow: 0 4px 15px rgba(149, 165, 166, 0.3) !important;
+                cursor: not-allowed !important;
+                opacity: 0.8 !important;
             }
             
-            .gr-button.gr-button-secondary:hover {
-                transform: translateY(-2px) !important;
-                box-shadow: 0 6px 20px rgba(149, 165, 166, 0.4) !important;
+            .process-btn[value*="Analyzing"]:hover {
+                transform: none !important;
+                box-shadow: 0 6px 20px rgba(243, 156, 18, 0.3) !important;
             }
             
-            /* Message Input */
-            .message-input .gr-textbox textarea {
-                border: 2px solid #555555 !important;
-                border-radius: 8px !important;
-                padding: 12px 15px !important;
-                font-size: 14px !important;
-                background: #333333 !important;
-                color: #ffffff !important;
-                transition: all 0.3s ease !important;
+            /* Results Section */
+            .results-section {
+                background: #2a2a2a;
+                border-radius: 16px;
+                padding: 25px;
+                margin-top: 25px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+                border: 2px solid #404040;
+                border-left: 6px solid #2ecc71;
             }
             
-            .message-input .gr-textbox textarea:focus {
-                border-color: #3498db !important;
-                background: #3a3a3a !important;
-                box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2) !important;
-                outline: none !important;
+            .results-section h3 {
+                color: #27ae60;
+                font-size: 22px;
+                font-weight: 600;
+                margin-bottom: 20px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .results-content {
+                background: #333333;
+                border: 1px solid #555555;
+                border-radius: 12px;
+                padding: 20px;
+                min-height: 300px;
+                font-size: 14px;
+                line-height: 1.6;
+                color: #ffffff;
+                white-space: pre-wrap;
+                overflow-y: auto;
+                max-height: 500px;
+            }
+            
+            .results-content:empty::before {
+                content: "Click 'Process' to analyze your resume and job description match...";
+                color: #999;
+                font-style: italic;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 260px;
+            }
+            
+            /* Loading State */
+            .loading {
+                text-align: center;
+                padding: 40px;
+                color: #f39c12;
+            }
+            
+            .loading::before {
+                content: "🔄 ";
+                font-size: 1.5em;
+                animation: spin 1s linear infinite;
+            }
+            
+            @keyframes spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
             }
             
             /* File Status */
             .file-status {
-                color: #27ae60 !important;
-                font-weight: 500 !important;
-                margin-top: 8px !important;
+                margin-top: 10px;
+                padding: 8px 12px;
+                background: #d4edda;
+                color: #155724;
+                border: 1px solid #c3e6cb;
+                border-radius: 6px;
+                font-size: 12px;
+                font-weight: 500;
             }
             
             /* Responsive Design */
-            @media (max-width: 1200px) {
+            @media (max-width: 768px) {
                 .main-container {
-                    max-width: 95%;
                     padding: 15px;
                 }
                 
-                .top-section {
-                    gap: 20px !important;
-                    padding: 20px;
-                }
-            }
-            
-            @media (max-width: 768px) {
-                .top-section {
-                    grid-template-columns: 1fr !important;
-                    gap: 20px !important;
+                .resume-options {
+                    grid-template-columns: 1fr;
+                    gap: 15px;
                 }
                 
-                .input-columns .gr-textbox textarea {
-                    height: 180px !important;
+                .header-section h1 {
+                    font-size: 2em;
                 }
                 
-                .chat-container .gr-chatbot {
-                    height: 300px !important;
-                }
-                
-                .action-buttons {
-                    flex-direction: column !important;
-                    align-items: center !important;
-                }
-                
-                .gr-button {
-                    width: 200px !important;
+                .process-btn {
+                    padding: 12px 30px !important;
+                    font-size: 16px !important;
                 }
             }
             
             /* Custom Scrollbar */
-            .gr-textbox textarea::-webkit-scrollbar {
+            .gr-textbox textarea::-webkit-scrollbar,
+            .results-content::-webkit-scrollbar {
                 width: 8px;
             }
             
-            .gr-textbox textarea::-webkit-scrollbar-track {
-                background: #444444;
+            .gr-textbox textarea::-webkit-scrollbar-track,
+            .results-content::-webkit-scrollbar-track {
+                background: #404040;
                 border-radius: 4px;
             }
             
-            .gr-textbox textarea::-webkit-scrollbar-thumb {
-                background: #666666;
+            .gr-textbox textarea::-webkit-scrollbar-thumb,
+            .results-content::-webkit-scrollbar-thumb {
+                background: #27ae60;
                 border-radius: 4px;
             }
             
-            .gr-textbox textarea::-webkit-scrollbar-thumb:hover {
-                background: #888888;
+            .gr-textbox textarea::-webkit-scrollbar-thumb:hover,
+            .results-content::-webkit-scrollbar-thumb:hover {
+                background: #2ecc71;
             }
             
-            /* Force override with JavaScript execution */
+            /* Hide elements initially */
+            .hidden {
+                display: none !important;
+            }
+            
+            /* Toggle Buttons */
+            .resume-section .gr-button {
+                padding: 8px 16px !important;
+                font-size: 13px !important;
+                border-radius: 8px !important;
+                margin: 0 5px !important;
+                min-width: 120px !important;
+                background: #404040 !important;
+                color: #ffffff !important;
+                border: 1px solid #555555 !important;
+                transition: all 0.3s ease !important;
+            }
+            
+            .resume-section .gr-button:hover {
+                background: #27ae60 !important;
+                color: white !important;
+                border-color: #2ecc71 !important;
+                transform: translateY(-1px) !important;
+            }
+            
+            .resume-section .gr-button:active {
+                background: #2ecc71 !important;
+                transform: translateY(0) !important;
+            }
         """
     ) as demo:
         
-        # Add JavaScript to force textarea height
-        demo.load(
-            fn=None,
-            inputs=None,
-            outputs=None,
-            js="""
-            function() {
-                setTimeout(function() {
-                    const textareas = document.querySelectorAll('.input-columns textarea, .resume-upload-row textarea');
-                    textareas.forEach(function(textarea) {
-                        textarea.style.height = '220px';
-                        textarea.style.maxHeight = '220px';
-                        textarea.style.minHeight = '220px';
-                        textarea.style.resize = 'none';
-                        textarea.style.overflowY = 'auto';
-                        
-                        // Override any dynamic changes
-                        const observer = new MutationObserver(function(mutations) {
-                            mutations.forEach(function(mutation) {
-                                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-                                    if (textarea.style.height !== '220px') {
-                                        textarea.style.height = '220px';
-                                        textarea.style.maxHeight = '220px';
-                                        textarea.style.minHeight = '220px';
-                                    }
-                                }
-                            });
-                        });
-                        observer.observe(textarea, { attributes: true, attributeFilter: ['style'] });
-                    });
-                }, 500);
-            }
-            """
-        )
-        
         with gr.Column(elem_classes=["main-container"]):
-            gr.Markdown("## 🎯 Resume Match & Advisory (RMA) Agent")
-            gr.Markdown("Paste or upload your resume and job description to get real-time AI guidance.")
+            # Header Section
+            with gr.Column(elem_classes=["header-section"]):
+                gr.HTML("<h1>🎯 Resume Match & Advisory Agent</h1>")
+                gr.HTML("<p>Get AI-powered insights on how well your resume matches the job description</p>")
             
-            # ─── TOP SECTION (30% height) ────────────────────────────────
-            with gr.Row(elem_classes=["top-section"]):
-                with gr.Column(scale=1, elem_classes=["input-columns"], min_width=400):
-                    gr.Markdown("### 📋 Job Description")
-                    job_desc = gr.Textbox(
-                        placeholder="Paste the job description here…",
+            # Job Description Section
+            with gr.Column(elem_classes=["input-section", "job-desc-section"]):
+                gr.HTML('<div class="section-title">📋 Job Description</div>')
+                job_desc = gr.Textbox(
+                    placeholder="Enter the complete job description here...\n\nInclude:\n• Job title and company\n• Required skills and qualifications\n• Job responsibilities\n• Experience requirements",
+                    lines=8,
+                    label="",
+                    show_copy_button=True
+                )
+            
+            # Resume Section
+            with gr.Column(elem_classes=["input-section", "resume-section"]):
+                gr.HTML('<div class="section-title">📄 Resume</div>')
+                
+                # Toggle buttons for resume input method
+                with gr.Row():
+                    upload_btn = gr.Button("📎 Upload File", size="sm", variant="secondary")
+                    text_btn = gr.Button("✏️ Paste Text", size="sm", variant="secondary")
+                
+                # Resume input area (both options in same space)
+                with gr.Column():
+                    resume_file = gr.File(
+                        file_types=[".pdf", ".docx", ".txt"],
+                        label="Choose Resume File",
+                        visible=False
+                    )
+                    resume_text = gr.Textbox(
+                        placeholder="Paste your resume text here...\n\nInclude:\n• Contact information\n• Work experience\n• Education\n• Skills\n• Achievements",
                         lines=8,
-                        label="",
-                        max_lines=10
-                    )
-                
-                with gr.Column(scale=1, elem_classes=["input-columns"], min_width=400):
-                    gr.Markdown("### 📄 Resume")
-                    with gr.Row(elem_classes=["resume-upload-row"]):
-                        resume_text = gr.Textbox(
-                            placeholder="Paste your resume here or click 📎 to upload file…",
-                            lines=10,
-                            label="",
-                            scale=10,
-                            max_lines=10,
-                            autoscroll=False,
-                            show_copy_button=True
-                        )
-                        attach_btn = gr.Button("📎", size="sm", scale=1, elem_classes=["attach-btn"])
-                    
-                        resume_file = gr.File(
-                            file_types=[".pdf", ".docx", ".txt"],
-                            visible=False,
-                            scale=1
-                        )
-                        file_status = gr.Markdown(elem_classes=["file-status"])
-            
-            # ─── BOTTOM SECTION (70% height) ───────────────────────────
-            with gr.Column(elem_classes=["bottom-section"]):
-                gr.Markdown("### 💬 AI Chat & Analysis")
-                
-                with gr.Column(elem_classes=["chat-container"]):
-                    chatbot = gr.Chatbot(
-                        label="",
+                        label="Resume Text",
                         show_copy_button=True,
-                        # type="messages"
+                        visible=False,
+                        elem_classes=["resume-text-area"]
                     )
-                    
-                    with gr.Row(elem_classes=["action-buttons"]):
-                        analyze_btn = gr.Button("🔍 Analyze Match", variant="primary")
-                        clear_btn = gr.Button("🗑️ Clear Chat", variant="secondary")
-                    
-                    # with gr.Row(elem_classes=["message-input"]):
-                    #     qa_text = gr.Textbox(placeholder="Enter your message here...", lines=1, label="")
+                    file_status = gr.HTML("")
+            
+            # Process Button
+            with gr.Column(elem_classes=["process-section"]):
+                process_btn = gr.Button("🚀 Process & Analyze", elem_classes=["process-btn"], variant="primary")
+            
+            # Results Section (Initially hidden)
+            with gr.Column(elem_classes=["results-section"], visible=False) as results_section:
+                gr.HTML('<h3>📊 Analysis Results</h3>')
+                results_display = gr.HTML("", elem_classes=["results-content"])
         
         # Event handlers
-        attach_btn.click(
-            fn=lambda: gr.File(visible=True),
-            outputs=[resume_file]
+        def handle_file_upload_new(file):
+            if file is not None:
+                filename = os.path.basename(file.name)
+                ext = os.path.splitext(filename)[1].lower()
+                if ext == ".txt":
+                    with open(file.name, "r", encoding="utf-8") as f:
+                        content = f.read()
+                    return content, f'<div class="file-status">✅ Uploaded: {filename}</div>', ""
+                else:
+                    return "", f'<div class="file-status">✅ Uploaded: {filename}</div>', "[📄 Resume file will be processed automatically]"
+            return "", "", ""
+        
+        def process_analysis(job_desc, resume_file, resume_text):
+            if not job_desc.strip():
+                return gr.update(visible=True), "<div style='color: #e74c3c; padding: 20px; text-align: center;'>❌ Please enter a job description</div>", gr.update(value="🚀 Process & Analyze")
+            
+            if not resume_file and not resume_text.strip():
+                return gr.update(visible=True), "<div style='color: #e74c3c; padding: 20px; text-align: center;'>❌ Please upload a resume file or paste resume text</div>", gr.update(value="🚀 Process & Analyze")
+            
+            # Show loading state
+            loading_html = "<div class='loading'>Analyzing your resume and job description...</div>"
+            
+            try:
+                # API call logic (same as before)
+                data = {
+                    "job_description": job_desc,
+                    "resume_text": resume_text,
+                }
+                files = {}
+                if resume_file:
+                    with open(resume_file.name, "rb") as f:
+                        files["resume_file"] = (
+                            os.path.basename(resume_file.name),
+                            f,
+                            "application/pdf" if resume_file.name.endswith(".pdf") else "text/plain"
+                        )
+                        response = requests.post("http://localhost:8345/analyze", data=data, files=files)
+                        response.raise_for_status()
+                        result = response.json()
+                else:
+                    response = requests.post("http://localhost:8345/analyze", data=data)
+                    response.raise_for_status()
+                    result = response.json()
+
+                final_report = result["data"]["final_report"]
+                
+                # Format the results nicely
+                formatted_result = f"""
+<div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #f39c12;">
+<h4 style="color: #d35400; margin-top: 0;">📋 Analysis Report</h4>
+<div style="white-space: pre-wrap; line-height: 1.6; color: #5d4037;">
+{final_report}
+</div>
+</div>
+                """
+                
+                return gr.update(visible=True), formatted_result, gr.update(value="🚀 Process & Analyze")
+                
+            except Exception as e:
+                error_html = f"""
+<div style="background: #f8d7da; padding: 20px; border-radius: 8px; border-left: 4px solid #dc3545; color: #721c24;">
+<h4 style="margin-top: 0;">❌ Error</h4>
+<p>Failed to analyze resume: {str(e)}</p>
+<p><small>Please check if the API server is running on localhost:8345</small></p>
+</div>
+                """
+                return gr.update(visible=True), error_html, gr.update(value="🚀 Process & Analyze")
+        
+        # Event bindings
+        upload_btn.click(
+            fn=lambda: (gr.update(visible=True), gr.update(visible=False)),
+            inputs=[],
+            outputs=[resume_file, resume_text]
+        )
+        
+        text_btn.click(
+            fn=lambda: (gr.update(visible=False), gr.update(visible=True)),
+            inputs=[],
+            outputs=[resume_file, resume_text]
         )
         
         resume_file.change(
-            fn=handle_file_upload,
+            fn=handle_file_upload_new,
             inputs=[resume_file],
-            outputs=[resume_text, file_status]
+            outputs=[resume_text, file_status, resume_text]
         )
         
-        analyze_btn.click(
-            fn=analyze_resume_job, # from here the button calls the main.py function
-            inputs=[job_desc, resume_file, resume_text, chatbot], # TODO: qa_text for the chatbot integration
-            outputs=[chatbot]
+        process_btn.click(
+            fn=lambda: gr.update(value="🔄 Analyzing..."),
+            inputs=[],
+            outputs=[process_btn]
+        ).then(
+            fn=process_analysis,
+            inputs=[job_desc, resume_file, resume_text],
+            outputs=[results_section, results_display, process_btn]
         )
-        
-        clear_btn.click(fn=clear_chat, outputs=[chatbot])
     
     return demo
 
